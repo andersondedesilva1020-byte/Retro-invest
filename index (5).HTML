@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RETRO INVEST · animado</title>
+  <style>
+    /* ===== RESET & BASE ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #0b0f0b;
+      color: #00ff88;
+      font-family: 'Courier New', monospace;
+      min-height: 100vh;
+      padding: 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ===== FUNDO ANIMADO (partículas sutis) ===== */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background:
+        radial-gradient(2px 2px at 15% 20%, #00ff6633, transparent),
+        radial-gradient(2px 2px at 35% 70%, #00ff6644, transparent),
+        radial-gradient(3px 3px at 55% 30%, #00ff8822, transparent),
+        radial-gradient(2px 2px at 75% 80%, #00ff6644, transparent),
+        radial-gradient(2px 2px at 90% 15%, #00ff8833, transparent),
+        radial-gradient(2px 2px at 10% 90%, #00ff6644, transparent);
+      background-size: 200% 200%;
+      animation: moveBg 24s ease-in-out infinite alternate;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    @keyframes moveBg {
+      0% { background-position: 0% 0%; }
+      50% { background-position: 100% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+
+    /* ===== ELEMENTOS FLUTUANTES (extra) ===== */
+    .glow-pulse {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, #00ff6615 0%, transparent 70%);
+      border-radius: 50%;
+      top: -80px;
+      right: -80px;
+      animation: pulseGlow 8s infinite alternate ease-in-out;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .glow-pulse-2 {
+      left: -100px;
+      bottom: -100px;
+      top: auto;
+      right: auto;
+      animation-delay: 2s;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #00ff8822 0%, transparent 70%);
+    }
+
+    @keyframes pulseGlow {
+      0% { opacity: 0.3; transform: scale(0.95); }
+      100% { opacity: 0.9; transform: scale(1.4); }
+    }
+
+    /* ===== APP ===== */
+    .app {
+      max-width: 860px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===== HEADER ===== */
+    .header {
+      border: 2px solid #00ff88;
+      padding: 18px 12px;
+      text-align: center;
+      box-shadow: 0 0 30px #00ff8833;
+      margin-bottom: 18px;
+      background: #0b120bb0;
+      backdrop-filter: blur(2px);
+      border-radius: 4px;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      text-shadow: 0 0 16px #00ff88;
+      color: #00ff88;
+    }
+
+    .subtitle {
+      margin-top: 6px;
+      font-size: 13px;
+      opacity: 0.8;
+      letter-spacing: 1px;
+    }
+
+    /* ===== PANELS ===== */
+    .panel {
+      border: 1px solid #00ff88;
+      padding: 18px 14px;
+      margin-bottom: 18px;
+      background: #0b120bb0;
+      backdrop-filter: blur(2px);
+      box-shadow: 0 0 18px #00ff8822;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+
+    .panel:hover {
+      border-color: #66ffaa;
+    }
+
+    .panel h2 {
+      font-size: 17px;
+      margin-bottom: 16px;
+      border-bottom: 1px dashed #00ff88;
+      padding-bottom: 8px;
+      letter-spacing: 1px;
+      color: #88ffbb;
+    }
+
+    /* ===== GRID ===== */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      color: #88ffbb;
+    }
+
+    input, select {
+      width: 100%;
+      background: #0a140a;
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      padding: 12px 10px;
+      font-family: inherit;
+      font-size: 15px;
+      outline: none;
+      border-radius: 4px;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #88ffbb;
+      box-shadow: 0 0 16px #00ff8866;
+    }
+
+    /* ===== BOTÕES ===== */
+    button {
+      width: 100%;
+      margin-top: 18px;
+      padding: 14px;
+      background: #00ff88;
+      color: #001f0f;
+      border: none;
+      font-family: inherit;
+      font-weight: bold;
+      font-size: 16px;
+      letter-spacing: 1px;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      box-shadow: 0 0 0 #00ff8833;
+      text-transform: uppercase;
+    }
+
+    button:hover {
+      background: #88ffbb;
+      box-shadow: 0 0 30px #00ff88aa;
+      transform: scale(1.01);
+    }
+
+    button:active {
+      transform: scale(0.97);
+    }
+
+    /* ===== RESULTADOS ===== */
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .card {
+      border: 1px solid #00ff88;
+      padding: 14px 8px;
+      text-align: center;
+      background: #0a140a60;
+      border-radius: 4px;
+    }
+
+    .card small {
+      display: block;
+      font-size: 11px;
+      margin-bottom: 6px;
+      color: #88ffbb;
+    }
+
+    .card strong {
+      font-size: 18px;
+      font-weight: 700;
+      color: #aaffcc;
+    }
+
+    /* ===== GRÁFICO ===== */
+    canvas {
+      width: 100%;
+      height: 280px;
+      background: #0a140a;
+      border: 1px solid #00ff88;
+      border-radius: 4px;
+      display: block;
+    }
+
+    /* ===== META ===== */
+    .goal-bar {
+      height: 28px;
+      border: 1px solid #00ff88;
+      margin-top: 12px;
+      padding: 4px;
+      border-radius: 4px;
+      background: #0a140a;
+    }
+
+    .goal-fill {
+      height: 100%;
+      width: 0%;
+      background: #00ff88;
+      border-radius: 2px;
+      transition: width 0.5s ease;
+      box-shadow: 0 0 14px #00ff8866;
+    }
+
+    .goal-text {
+      margin-top: 10px;
+      font-size: 13px;
+      text-align: center;
+      color: #aaffcc;
+    }
+
+    /* ===== COMPARAÇÃO ===== */
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .compare-box {
+      border: 1px solid #00ff88;
+      padding: 14px;
+      border-radius: 4px;
+      background: #0a140a60;
+    }
+
+    .compare-box h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #88ffbb;
+    }
+
+    .compare-box p {
+      margin: 6px 0;
+      font-size: 13px;
+    }
+
+    .compare-box b {
+      color: #aaffcc;
+    }
+
+    /* ===== EXPLICAÇÃO ===== */
+    .explain {
+      line-height: 1.7;
+      font-size: 14px;
+    }
+    .explain b {
+      color: #88ffbb;
+    }
+    .explain p {
+      margin-bottom: 6px;
+    }
+
+    .warning {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 18px;
+      line-height: 1.6;
+      border-top: 1px dashed #00ff8855;
+      padding-top: 14px;
+      color: #bbffdd;
+    }
+
+    /* ===== STATUS ===== */
+    .status {
+      text-align: center;
+      padding: 8px 12px;
+      border: 1px dashed #00ff88;
+      margin-bottom: 18px;
+      font-size: 13px;
+      background: #0a140a60;
+      border-radius: 30px;
+      letter-spacing: 1px;
+      color: #88ffbb;
+    }
+
+    /* ===== RESPONSIVO ===== */
+    @media (max-width: 620px) {
+      .grid, .compare {
+        grid-template-columns: 1fr;
+      }
+      .results {
+        grid-template-columns: 1fr;
+      }
+      .logo {
+        font-size: 24px;
+      }
+      canvas {
+        height: 200px;
+      }
+      .panel {
+        padding: 14px 10px;
+      }
+      button {
+        font-size: 14px;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- elementos flutuantes do fundo -->
+  <div class="glow-pulse"></div>
+  <div class="glow-pulse glow-pulse-2"></div>
+
+  <div class="app">
+
+    <header class="header">
+      <div class="logo">RETRO INVEST</div>
+      <div class="subtitle">[ SIMULADOR FINANCEIRO v2.0 · ANIMADO ]</div>
+    </header>
+
+    <div class="status">
+      ● SISTEMA ONLINE | SIMULAÇÃO ATIVA
+    </div>
+
+    <!-- CONFIGURAÇÃO -->
+    <section class="panel">
+      <h2>01 // CONFIGURAÇÃO DO INVESTIMENTO</h2>
+      <div class="grid">
+        <div class="field">
+          <label>VALOR INICIAL (R$)</label>
+          <input id="initial" type="number" value="1000">
+        </div>
+        <div class="field">
+          <label>DEPÓSITO MENSAL (R$)</label>
+          <input id="monthly" type="number" value="300">
+        </div>
+        <div class="field">
+          <label>PERÍODO (MESES)</label>
+          <input id="months" type="number" value="60">
+        </div>
+        <div class="field">
+          <label>INVESTIMENTO</label>
+          <select id="investment">
+            <option value="0.005">Poupança — 0,50% a.m.</option>
+            <option value="0.008">CDB — 0,80% a.m.</option>
+            <option value="0.009">Tesouro — 0,90% a.m.</option>
+            <option value="0.012">Cenário hipotético — 1,20% a.m.</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="simulate()">▶ CALCULAR INVESTIMENTO</button>
+    </section>
+
+    <!-- RESULTADOS -->
+    <section class="panel">
+      <h2>02 // RESULTADO</h2>
+      <div class="results">
+        <div class="card">
+          <small>VALOR INVESTIDO</small>
+          <strong id="invested">R$ 0,00</strong>
+        </div>
+        <div class="card">
+          <small>RENDIMENTO</small>
+          <strong id="profit">R$ 0,00</strong>
+        </div>
+        <div class="card">
+          <small>VALOR FINAL</small>
+          <strong id="final">R$ 0,00</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- GRÁFICO -->
+    <section class="panel">
+      <h2>03 // EVOLUÇÃO DO PATRIMÔNIO</h2>
+      <canvas id="chart"></canvas>
+    </section>
+
+    <!-- META -->
+    <section class="panel">
+      <h2>04 // SISTEMA DE METAS 🎮</h2>
+      <div class="field">
+        <label>MINHA META (R$)</label>
+        <input id="goal" type="number" value="10000">
+      </div>
+      <div class="goal-bar">
+        <div class="goal-fill" id="goalFill"></div>
+      </div>
+      <div class="goal-text" id="goalText">
+        META: aguardando simulação...
+      </div>
+    </section>
+
+    <!-- COMPARAÇÃO -->
+    <section class="panel">
+      <h2>05 // COMPARAR INVESTIMENTOS</h2>
+      <div class="grid">
+        <div class="field">
+          <label>INVESTIMENTO A</label>
+          <select id="compareA">
+            <option value="0.005">Poupança</option>
+            <option value="0.008" selected>CDB</option>
+            <option value="0.009">Tesouro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>INVESTIMENTO B</label>
+          <select id="compareB">
+            <option value="0.005">Poupança</option>
+            <option value="0.008">CDB</option>
+            <option value="0.009" selected>Tesouro</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="compareInvestments()">⚡ COMPARAR</button>
+      <div class="compare" id="comparison" style="margin-top:15px;"></div>
+    </section>
+
+    <!-- EXPLICAÇÃO -->
+    <section class="panel">
+      <h2>06 // APRENDA 📚</h2>
+      <div class="explain">
+        <p><b>💰 Valor inicial:</b> dinheiro colocado no investimento no começo.</p>
+        <p><b>➕ Depósito mensal:</b> valor que você adiciona todos os meses.</p>
+        <p><b>📈 Rendimento:</b> crescimento estimado do dinheiro através da taxa utilizada.</p>
+        <p><b>🏦 Poupança:</b> uma forma simples de guardar dinheiro, geralmente com rendimento menor que outras alternativas.</p>
+        <p><b>💼 CDB:</b> título emitido por bancos. A rentabilidade depende do produto escolhido.</p>
+        <p><b>🇧🇷 Tesouro:</b> títulos públicos com diferentes formas de rentabilidade e prazos.</p>
+      </div>
+      <div class="warning">
+        ⚠ ESTE APLICATIVO É EDUCACIONAL. OS VALORES SÃO SIMULADOS E NÃO REPRESENTAM GARANTIA DE RENTABILIDADE. ANTES DE INVESTIR, PESQUISE E CONVERSE COM UM ADULTO RESPONSÁVEL OU PROFISSIONAL QUALIFICADO.
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ===== DADOS GLOBAIS =====
+    let lastData = [];
+
+    // ===== AUXILIARES =====
+    function money(value) {
+      return value.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function getName(value) {
+      const map = {
+        "0.005": "Poupança",
+        "0.008": "CDB",
+        "0.009": "Tesouro"
+      };
+      return map[value] || "Investimento";
+    }
+
+    // ===== CÁLCULO PRINCIPAL =====
+    function calculate(initial, monthly, months, rate) {
+      let balance = initial;
+      let totalInvested = initial;
+      const data = [balance];
+
+      for (let i = 1; i <= months; i++) {
+        balance = balance * (1 + rate) + monthly;
+        totalInvested += monthly;
+        data.push(balance);
+      }
+
+      return {
+        balance,
+        totalInvested,
+        profit: balance - totalInvested,
+        data
+      };
+    }
+
+    // ===== SIMULAR =====
+    function simulate() {
+      const initial = Number(document.getElementById("initial").value) || 0;
+      const monthly = Number(document.getElementById("monthly").value) || 0;
+      const months = Number(document.getElementById("months").value) || 0;
+      const rate = Number(document.getElementById("investment").value);
+
+      if (months <= 0) {
+        alert("Digite um período válido (meses > 0).");
+        return;
+      }
+
+      const result = calculate(initial, monthly, months, rate);
+      lastData = result.data;
+
+      document.getElementById("invested").textContent = money(result.totalInvested);
+      document.getElementById("profit").textContent = money(result.profit);
+      document.getElementById("final").textContent = money(result.balance);
+
+      updateGoal(result.balance);
+      drawChart(result.data);
+    }
+
+    // ===== META =====
+    function updateGoal(value) {
+      const goal = Number(document.getElementById("goal").value) || 0;
+      if (goal <= 0) {
+        document.getElementById("goalFill").style.width = "0%";
+        document.getElementById("goalText").textContent = "⚠ Defina uma meta válida (R$)";
+        return;
+      }
+
+      let pct = Math.min((value / goal) * 100, 100);
+      document.getElementById("goalFill").style.width = pct + "%";
+
+      if (value >= goal) {
+        document.getElementById("goalText").textContent = "🏆 META ALCANÇADA! " + money(value);
+      } else {
+        document.getElementById("goalText").textContent =
+          "PROGRESSO: " + pct.toFixed(1) + "% | ATUAL: " + money(value) + " | META: " + money(goal);
+      }
+    }
+
+    // ===== GRÁFICO =====
+    function drawChart(data) {
+      const canvas = document.getElementById("chart");
+      const ctx = canvas.getContext("2d");
+
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const W = rect.width;
+      const H = rect.height;
+      ctx.clearRect(0, 0, W, H);
+
+      if (!data || data.length < 2) {
+        ctx.fillStyle = "#00ff8866";
+        ctx.font = "14px 'Courier New', monospace";
+        ctx.textAlign = "center";
+        ctx.fillText("⏳ aguardando dados", W/2, H/2);
+        return;
+      }
+
+      const max = Math.max(...data);
+      const padding = 32;
+
+      // grade
+      ctx.strokeStyle = "#1a3a2a";
+      ctx.lineWidth = 1;
+      for (let i = 0; i < 5; i++) {
+        const y = padding + ((H - padding * 2) / 4) * i;
+        ctx.beginPath();
+        ctx.moveTo(padding, y);
+        ctx.lineTo(W - padding, y);
+        ctx.stroke();
+      }
+
+      // linha
+      ctx.strokeStyle = "#00ff88";
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "#00ff8866";
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+
+      data.forEach((val, idx) => {
+        const x = padding + (idx / (data.length - 1)) * (W - padding * 2);
+        const y = H - padding - (val / max) * (H - padding * 2);
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // ponto final
+      const last = data[data.length - 1];
+      const lx = W - padding;
+      const ly = H - padding - (last / max) * (H - padding * 2);
+      ctx.fillStyle = "#88ffbb";
+      ctx.shadowColor = "#00ff88aa";
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(lx, ly, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // label final
+      ctx.fillStyle = "#aaffcc";
+      ctx.font = "bold 13px 'Courier New', monospace";
+      ctx.textAlign = "right";
+      ctx.fillText(money(last), lx - 10, ly - 10);
+    }
+
+    // ===== COMPARAR =====
+    function compareInvestments() {
+      const initial = Number(document.getElementById("initial").value) || 0;
+      const monthly = Number(document.getElementById("monthly").value) || 0;
+      const months = Number(document.getElementById("months").value) || 0;
+      const rateA = Number(document.getElementById("compareA").value);
+      const rateB = Number(document.getElementById("compareB").value);
+
+      const resultA = calculate(initial, monthly, months, rateA);
+      const resultB = calculate(initial, monthly, months, rateB);
+
+      document.getElementById("comparison").innerHTML = `
+        <div class="compare-box">
+          <h3>📊 ${getName(rateA)}</h3>
+          <p>Investido: ${money(resultA.totalInvested)}</p>
+          <p>Rendimento: ${money(resultA.profit)}</p>
+          <p><b>Final: ${money(resultA.balance)}</b></p>
+        </div>
+        <div class="compare-box">
+          <h3>📊 ${getName(rateB)}</h3>
+          <p>Investido: ${money(resultB.totalInvested)}</p>
+          <p>Rendimento: ${money(resultB.profit)}</p>
+          <p><b>Final: ${money(resultB.balance)}</b></p>
+        </div>
+      `;
+    }
+
+    // ===== INICIAR =====
+    window.addEventListener('load', () => {
+      simulate();
+      // redesenha gráfico se redimensionar
+      let resizeTimer;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+          if (lastData.length) drawChart(lastData);
+        }, 200);
+      });
+    });
+
+    // ===== META: atualizar ao digitar =====
+    document.getElementById("goal").addEventListener('input', () => {
+      const finalText = document.getElementById("final").textContent;
+      const raw = finalText.replace(/[R$.\s]/g, '').replace(',', '.');
+      const value = parseFloat(raw);
+      if (!isNaN(value) && value > 0) updateGoal(value);
+    });
+  </script>
+</body>
+</html>
